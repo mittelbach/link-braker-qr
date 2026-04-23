@@ -81,32 +81,29 @@ with tab2:
     )
 
     if archivo_barras:
-        with st.spinner("⚡ Procesando imagen con Súper-Resolución..."):
+        with st.spinner("⚡ Escaneando factura..."):
             try:
                 from pyzbar.pyzbar import decode
-                import numpy as np
 
-                # 1. CARGA Y PRE-PROCESAMIENTO
+                # Procesamiento de imagen para máximo contraste
                 img_pil_b = Image.open(archivo_barras)
                 img_cv = cv2.cvtColor(np.array(img_pil_b), cv2.COLOR_RGB2BGR)
                 gray = cv2.cvtColor(img_cv, cv2.COLOR_BGR2GRAY)
 
-                # 2. MODO LUPA (Duplicamos el tamaño para ver barras finas)
+                # Aumentamos tamaño y aplicamos nitidez (Caza-Claro)
                 alto, ancho = gray.shape
                 gray = cv2.resize(
                     gray, (ancho * 2, alto * 2), interpolation=cv2.INTER_LANCZOS4
                 )
-
-                # 3. FILTRO DE NITIDEZ (Para definir bordes borrosos)
                 kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
                 gray = cv2.filter2D(gray, -1, kernel)
 
-                # 4. BINARIZACIÓN (Blanco y negro puro)
+                # Filtro de limpieza (Binarización)
                 _, final_img = cv2.threshold(
                     gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU
                 )
 
-                # 5. ESCANEO INDUSTRIAL
+                # Motor Industrial de escaneo
                 resultados = decode(final_img)
 
                 if resultados:
@@ -114,28 +111,20 @@ with tab2:
                     st.balloons()
                     for obj in resultados:
                         dato = obj.data.decode("utf-8")
-                        tipo = obj.type
-                        st.success(f"✅ CÓDIGO {tipo} DETECTADO")
+                        st.success(f"✅ CÓDIGO {obj.type} DETECTADO")
                         st.code(dato)
-                        st.info("💡 Copiá este número para pagar en tu Home Banking.")
-                else:
-                    # Intento final con la imagen original por si el filtro fue muy fuerte
-                    resultados_original = decode(img_pil_b)
-                    if resultados_original:
-                        registrar_uso("BARRAS", "ÉXITO")
-                        for obj in resultados_original:
-                            st.success(f"✅ CÓDIGO {obj.type} DETECTADO")
-                            st.code(obj.data.decode("utf-8"))
-                    else:
-                        st.error(
-                            "❌ No se detectó el código. Si es una captura, asegurate de que el código de barras ocupe la mayor parte de la foto."
+                        st.info(
+                            "💡 Copiá este número para pagar en tu Home Banking o App de pago."
                         )
+                else:
+                    st.error(
+                        "No se detectó el código. Asegurate de que la captura sea nítida y muestre todo el código de barras."
+                    )
 
             except ImportError:
                 st.warning(
-                    "Motor industrial no disponible. Verificá el requirements.txt"
+                    "Motor industrial no disponible. Verificá el archivo requirements.txt en GitHub."
                 )
-
 
 # 3. PANEL SECRETO S&M LABS
 st.write("")
