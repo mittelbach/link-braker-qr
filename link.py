@@ -5,18 +5,6 @@ from PIL import Image
 import sqlite3
 import datetime
 
-st.set_page_config(
-    page_title="LINK-BREAKER QR | S&M Labs",
-    page_icon="🔓",  # Acá podés poner la URL de tu logo en GitHub para que se vea el dibujito
-    layout="centered",
-    initial_sidebar_state="collapsed",
-    menu_items={
-        "Get Help": "https://streamlit.app",
-        "Report a bug": None,
-        "About": "# LINK-BREAKER QR\nHerramienta de Soberanía Digital creada por **S&M Labs** en Laprida.",
-    },
-)
-
 # 1. IDENTIDAD S&M LABS
 st.set_page_config(
     page_title="LINK-BREAKER UNIVERSAL", page_icon="🔓", layout="centered"
