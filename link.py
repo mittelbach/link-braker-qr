@@ -114,7 +114,7 @@ with tab2:
                         st.success(f"✅ CÓDIGO {obj.type} DETECTADO")
                         st.code(dato)
                         st.info(
-                            "💡 Copiá este número para pagar en tu Home Banking o App de pago."
+                            "💡 Copiá este número para pagar en tu Home Banking o hacer lo que necesites."
                         )
                 else:
                     st.error(
